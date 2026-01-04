@@ -1,0 +1,150 @@
+/* 전체 배경 */
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #dcdcff, #f7f7ff);
+  font-family: "Malgun Gothic", Arial, sans-serif;
+  color: #333;
+}
+
+/* 전체 컨테이너 */
+.container {
+  width: 900px;
+  margin: 40px auto;
+  background: #ffffff;
+  border: 3px solid #9aa0ff;
+  border-radius: 14px;
+  box-shadow: 6px 6px 0 rgba(120, 120, 255, 0.3);
+  padding: 20px;
+}
+
+/* 상단 헤더 */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 2px dotted #b5b8ff;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+/* 프로필 이미지 */
+.profile-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid #9aa0ff;
+  object-fit: cover;
+}
+
+/* 닉네임 */
+.nickname {
+  font-size: 22px;
+  font-weight: bold;
+  color: #5a5fff;
+}
+
+/* 상태 메시지 */
+.status {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* 메뉴 영역 */
+.menu {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.menu a {
+  text-decoration: none;
+  padding: 6px 14px;
+  background: #eef0ff;
+  border: 1px solid #b5b8ff;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #444;
+  transition: all 0.2s;
+}
+
+.menu a:hover {
+  background: #5a5fff;
+  color: #fff;
+}
+
+/* 메인 콘텐츠 영역 */
+.main {
+  display: flex;
+  gap: 20px;
+}
+
+/* 왼쪽 영역 */
+.left {
+  width: 60%;
+}
+
+/* 오른쪽 영역 */
+.right {
+  width: 40%;
+}
+
+/* 박스 공통 */
+.box {
+  background: #f9f9ff;
+  border: 2px solid #c6c9ff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+/* 박스 제목 */
+.box-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #5a5fff;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #c6c9ff;
+  padding-bottom: 5px;
+}
+
+/* 게시글 제목 */
+.post-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* 게시글 날짜 */
+.post-date {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+/* 게시글 내용 */
+.post-content {
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+/* 방명록 */
+.guestbook-item {
+  font-size: 13px;
+  border-bottom: 1px dotted #ccc;
+  padding: 6px 0;
+}
+
+.guestbook-item:last-child {
+  border-bottom: none;
+}
+
+/* 푸터 */
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+  margin-top: 20px;
+}
