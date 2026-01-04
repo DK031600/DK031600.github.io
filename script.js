@@ -120,4 +120,3 @@ document.getElementById("menu-guestbook").onclick = e => {
 };
 
 showHome();
-
