@@ -78,14 +78,17 @@ function renderBoard(row, el) {
 // 방명록 렌더링 (Sheet2)
 // ===============================
 function renderGuestbook(row, el) {
-  const [name, message, date] =
+  // Sheet2: [id, name, message, date]
+  const [, name, message, date] =
     row.c.map(c => (c ? c.v : ""));
 
   const item = document.createElement("div");
   item.className = "guestbook-item";
-  item.textContent = `${name} : ${message}`;
+  item.textContent = `${name} : ${message} (${formatDate(date)})`;
+
   el.appendChild(item);
 }
+
 
 // ===============================
 // 화면 제어 (UX)
