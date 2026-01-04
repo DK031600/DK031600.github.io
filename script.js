@@ -22,17 +22,20 @@ let boardData = [];
 let guestData = [];
 
 // ===============================
-// 로드
+// 데이터 로드 (중요)
 // ===============================
-function loadData() {
+function loadData(callback) {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
       boardData = data.board.slice(1);
       guestData = data.guestbook.slice(1);
+      if (callback) callback();
+    })
+    .catch(err => {
+      console.error("데이터 로드 실패", err);
     });
 }
-loadData();
 
 // ===============================
 // 화면
@@ -67,7 +70,6 @@ function showGuestbook() {
   boardEl.style.display = "none";
   guestbookEl.style.display = "block";
 
-  // 폼 아래만 초기화
   guestbookEl.querySelectorAll(".box").forEach(el => el.remove());
 
   guestData.slice().reverse().forEach(row => {
@@ -90,11 +92,11 @@ function showGuestbook() {
 // 방명록 등록
 // ===============================
 document.getElementById("guest-submit").onclick = () => {
-  const name = guest-name.value.trim();
-  const message = guest-message.value.trim();
+  const name = document.getElementById("guest-name").value.trim();
+  const message = document.getElementById("guest-message").value.trim();
 
   if (!name || !message) {
-    alert("이름과 내용을 입력해주세요");
+    alert("이름과 내용을 입력해주세요.");
     return;
   }
 
@@ -103,10 +105,9 @@ document.getElementById("guest-submit").onclick = () => {
     body: JSON.stringify({ name, message })
   })
   .then(() => {
-    guest-name.value = "";
-    guest-message.value = "";
-    loadData();
-    setTimeout(showGuestbook, 500);
+    document.getElementById("guest-name").value = "";
+    document.getElementById("guest-message").value = "";
+    loadData(showGuestbook);
   });
 };
 
@@ -114,8 +115,8 @@ document.getElementById("guest-submit").onclick = () => {
 // 메뉴
 // ===============================
 menu-home.onclick = e => { e.preventDefault(); showHome(); };
-menu-board.onclick = e => { e.preventDefault(); showBoard(); };
-menu-guestbook.onclick = e => { e.preventDefault(); showGuestbook(); };
+menu-board.onclick = e => { e.preventDefault(); loadData(showBoard); };
+menu-guestbook.onclick = e => { e.preventDefault(); loadData(showGuestbook); };
 
 // 초기
 showHome();
