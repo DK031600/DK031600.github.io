@@ -4,7 +4,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyczWzD2jqdNc3NtmYUwBUF
 // DOM
 // ===============================
 const boardEl = document.getElementById("board");
-const guestbookEl = document.getElementById("guestbook");
 
 // ===============================
 // 유틸
@@ -12,42 +11,39 @@ const guestbookEl = document.getElementById("guestbook");
 function formatDate(v) {
   const d = new Date(v);
   if (isNaN(d)) return "";
-  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
 // ===============================
 // 데이터
 // ===============================
 let boardData = [];
-let guestData = [];
 
 // ===============================
 // 데이터 로드
 // ===============================
-function loadData(callback) {
+function loadBoard() {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      console.log("로드된 데이터", data);
-      boardData = data.board.slice(1);
-      guestData = data.guestbook.slice(1);
-      if (callback) callback();
+      boardData = data.board.slice(1); // 헤더 제거
+      showBoard();
     })
-    .catch(err => console.error("데이터 로드 실패", err));
+    .catch(err => {
+      console.error("게시판 로드 실패", err);
+    });
 }
 
 // ===============================
 // 화면
 // ===============================
 function showHome() {
-  boardEl.style.display = "none";
-  guestbookEl.style.display = "none";
+  boardEl.innerHTML = "";
 }
 
 function showBoard() {
-  boardEl.style.display = "block";
-  guestbookEl.style.display = "none";
   boardEl.innerHTML = "";
+  boardEl.style.display = "block";
 
   boardData.forEach(row => {
     const [id, title, content, date, isPrivate] = row;
@@ -65,60 +61,18 @@ function showBoard() {
   });
 }
 
-function showGuestbook() {
-  boardEl.style.display = "none";
-  guestbookEl.style.display = "block";
-
-  guestbookEl.querySelectorAll(".box").forEach(el => el.remove());
-
-  guestData.slice().reverse().forEach(row => {
-    const [date, name, message] = row;
-    if (!name || !message) return;
-
-    const box = document.createElement("div");
-    box.className = "box";
-    box.innerHTML = `
-      <div class="box-title">방명록</div>
-      <div class="post-title">${name}</div>
-      <div class="post-date">${formatDate(date)}</div>
-      <div class="post-content">${message}</div>
-    `;
-    guestbookEl.appendChild(box);
-  });
-}
-
-// ===============================
-// 방명록 등록
-// ===============================
-document.getElementById("guest-submit").onclick = () => {
-  const name = document.getElementById("guest-name").value.trim();
-  const message = document.getElementById("guest-message").value.trim();
-
-  if (!name || !message) {
-    alert("이름과 내용을 입력해주세요.");
-    return;
-  }
-
-  fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, message })
-  })
-  .then(res => res.json())
-  .then(() => {
-    document.getElementById("guest-name").value = "";
-    document.getElementById("guest-message").value = "";
-    loadData(showGuestbook);
-  })
-  .catch(err => console.error("등록 실패", err));
-};
-
 // ===============================
 // 메뉴
 // ===============================
-menu-home.onclick = e => { e.preventDefault(); showHome(); };
-menu-board.onclick = e => { e.preventDefault(); loadData(showBoard); };
-menu-guestbook.onclick = e => { e.preventDefault(); loadData(showGuestbook); };
+menu-home.onclick = e => {
+  e.preventDefault();
+  showHome();
+};
+
+menu-board.onclick = e => {
+  e.preventDefault();
+  loadBoard();
+};
 
 // 초기
 showHome();
