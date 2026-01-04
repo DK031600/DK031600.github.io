@@ -1,9 +1,11 @@
 // ===============================
-// 구글 시트 설정
+// CSV URL
 // ===============================
-const SHEET_ID = "1X8y2tnuJG2d04Wu-lN--T_pM_uTUvfRoaQDG2yQUavc";
-const BOARD_SHEET = "Sheet1";
-const GUESTBOOK_SHEET = "Sheet2";
+const BOARD_CSV =
+  "https://docs.google.com/spreadsheets/d/1X8y2tnuJG2d04Wu-lN--T_pM_uTUvfRoaQDG2yQUavc/export?format=csv&gid=0";
+
+const GUESTBOOK_CSV =
+  "https://docs.google.com/spreadsheets/d/1X8y2tnuJG2d04Wu-lN--T_pM_uTUvfRoaQDG2yQUavc/export?format=csv&gid=1862305863";
 
 // ===============================
 // DOM
@@ -12,141 +14,110 @@ const boardEl = document.getElementById("board");
 const guestbookEl = document.getElementById("guestbook");
 
 // ===============================
-// 유틸 함수
+// 유틸
 // ===============================
-
-// 날짜 포맷: YYYY-MM-DD → YYYY.MM.DD
-function formatDate(value) {
-  if (!value) return "";
-  const d = new Date(value);
-  if (isNaN(d)) return value;
+function formatDate(v) {
+  if (!v) return "";
+  const d = new Date(v);
+  if (isNaN(d)) return v;
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-// XSS 안전한 엘리먼트 생성
-function createTextEl(tag, className, text) {
-  const el = document.createElement(tag);
-  if (className) el.className = className;
-  el.textContent = text ?? "";
-  return el;
+function parseCSV(text) {
+  return text
+    .trim()
+    .split("\n")
+    .map(row => row.split(",").map(v => v.replace(/^"|"$/g, "")));
 }
 
 // ===============================
-// 시트 로드 공통 함수 (최종 안정판)
+// 게시판
 // ===============================
-function loadSheet(sheetName, targetEl, renderFn) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+function loadBoard() {
+  boardEl.innerHTML = "";
 
-  fetch(url)
+  fetch(BOARD_CSV)
     .then(res => res.text())
     .then(text => {
-      const json = JSON.parse(text.substring(47, text.length - 2));
-      const rows = json.table.rows || [];
+      const rows = parseCSV(text);
+      rows.slice(1).forEach(r => {
+        const [id, title, content, date, isPrivate] = r;
+        if (isPrivate === "true") return;
 
-      targetEl.innerHTML = "";
+        const box = document.createElement("div");
+        box.className = "box";
+        box.innerHTML = `
+          <div class="box-title">게시글</div>
+          <div class="post-title"></div>
+          <div class="post-date"></div>
+          <div class="post-content"></div>
+        `;
+        box.querySelector(".post-title").textContent = title;
+        box.querySelector(".post-date").textContent = formatDate(date);
+        box.querySelector(".post-content").textContent = content;
 
-      rows.forEach((row, index) => {
-        // 첫 줄 = 헤더 제거
-        if (index === 0) return;
-
-        // row.c 없으면 스킵
-        if (!row.c) return;
-
-        renderFn(row, targetEl);
+        boardEl.appendChild(box);
       });
-    })
-    .catch(err => {
-      console.error("시트 로드 실패:", err);
     });
 }
 
 // ===============================
-// 게시판 렌더링 (Sheet1)
-// 구조: [postId, title, content, date, isPrivate]
+// 방명록
 // ===============================
-function renderBoard(row, el) {
-  const [postId, title, content, date, isPrivate] =
-    row.c.map(c => (c ? c.v : ""));
+function loadGuestbook() {
+  guestbookEl.innerHTML = "";
 
-  // 비공개 글 제외
-  if (isPrivate === true || isPrivate === "true") return;
+  fetch(GUESTBOOK_CSV)
+    .then(res => res.text())
+    .then(text => {
+      const rows = parseCSV(text);
+      rows.slice(1).forEach(r => {
+        const [, name, message, date] = r;
+        if (!name || !message) return;
 
-  // 제목이나 내용 없으면 스킵
-  if (!title || !content) return;
-
-  const box = document.createElement("div");
-  box.className = "box";
-
-  box.append(
-    createTextEl("div", "box-title", "게시글"),
-    createTextEl("div", "post-title", title),
-    createTextEl("div", "post-date", formatDate(date)),
-    createTextEl("div", "post-content", content)
-  );
-
-  el.appendChild(box);
+        const div = document.createElement("div");
+        div.className = "guestbook-item";
+        div.textContent = `${name} : ${message} (${formatDate(date)})`;
+        guestbookEl.appendChild(div);
+      });
+    });
 }
 
 // ===============================
-// 방명록 렌더링 (Sheet2)
-// 구조: [id, name, message, date]
-// ===============================
-function renderGuestbook(row, el) {
-  const [, name, message, date] =
-    row.c.map(c => (c ? c.v : ""));
-
-  if (!name || !message) return;
-
-  const item = document.createElement("div");
-  item.className = "guestbook-item";
-  item.textContent = `${name} : ${message} (${formatDate(date)})`;
-
-  el.appendChild(item);
-}
-
-// ===============================
-// 화면 제어 (UX)
+// 화면 제어
 // ===============================
 function showHome() {
   boardEl.style.display = "none";
   guestbookEl.style.display = "none";
-  boardEl.innerHTML = "";
-  guestbookEl.innerHTML = "";
 }
 
 function showBoard() {
   boardEl.style.display = "block";
   guestbookEl.style.display = "none";
-  boardEl.innerHTML = "";
-  loadSheet(BOARD_SHEET, boardEl, renderBoard);
+  loadBoard();
 }
 
 function showGuestbook() {
   boardEl.style.display = "none";
   guestbookEl.style.display = "block";
-  guestbookEl.innerHTML = "";
-  loadSheet(GUESTBOOK_SHEET, guestbookEl, renderGuestbook);
+  loadGuestbook();
 }
 
 // ===============================
-// 메뉴 버튼 이벤트
+// 메뉴
 // ===============================
-document.getElementById("menu-home").addEventListener("click", e => {
+document.getElementById("menu-home").onclick = e => {
   e.preventDefault();
   showHome();
-});
-
-document.getElementById("menu-board").addEventListener("click", e => {
+};
+document.getElementById("menu-board").onclick = e => {
   e.preventDefault();
   showBoard();
-});
-
-document.getElementById("menu-guestbook").addEventListener("click", e => {
+};
+document.getElementById("menu-guestbook").onclick = e => {
   e.preventDefault();
   showGuestbook();
-});
+};
 
-// ===============================
-// 초기 화면
-// ===============================
 showHome();
+
