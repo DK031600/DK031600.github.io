@@ -1,17 +1,19 @@
-// 🔗 구글 시트 ID
+// ===============================
+// 구글 시트 설정
+// ===============================
 const SHEET_ID = "1X8y2tnuJG2d04Wu-lN--T_pM_uTUvfRoaQDG2yQUavc";
-
-// 시트 이름
 const BOARD_SHEET = "Sheet1";
 const GUESTBOOK_SHEET = "Sheet2";
 
-// 영역
+// ===============================
+// DOM
+// ===============================
 const boardEl = document.getElementById("board");
 const guestbookEl = document.getElementById("guestbook");
 
-/* ======================
-   유틸 함수
-====================== */
+// ===============================
+// 유틸 함수
+// ===============================
 
 // 날짜 포맷: YYYY-MM-DD → YYYY.MM.DD
 function formatDate(value) {
@@ -21,7 +23,7 @@ function formatDate(value) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
-// 안전한 텍스트 엘리먼트 생성 (XSS 방지)
+// XSS 안전한 텍스트 엘리먼트 생성
 function createTextEl(tag, className, text) {
   const el = document.createElement(tag);
   if (className) el.className = className;
@@ -29,9 +31,9 @@ function createTextEl(tag, className, text) {
   return el;
 }
 
-/* ======================
-   공통 시트 로드
-====================== */
+// ===============================
+// 시트 로드 공통 함수 (🔥 헤더 제거)
+// ===============================
 function loadSheet(sheetName, targetEl, renderFn) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
@@ -43,14 +45,17 @@ function loadSheet(sheetName, targetEl, renderFn) {
 
       targetEl.innerHTML = "";
 
-      rows.forEach(row => renderFn(row, targetEl));
+      // 🔥 첫 줄(헤더) 제거
+      rows.slice(1).forEach(row => {
+        renderFn(row, targetEl);
+      });
     });
 }
 
-/* ======================
-   게시판 (Sheet1)
-====================== */
-loadSheet(BOARD_SHEET, boardEl, (row, el) => {
+// ===============================
+// 게시판 렌더링 (Sheet1)
+// ===============================
+function renderBoard(row, el) {
   const [postId, title, content, date, isPrivate] =
     row.c.map(c => (c ? c.v : ""));
 
@@ -59,19 +64,20 @@ loadSheet(BOARD_SHEET, boardEl, (row, el) => {
   const box = document.createElement("div");
   box.className = "box";
 
-  const boxTitle = createTextEl("div", "box-title", "게시글");
-  const postTitle = createTextEl("div", "post-title", title);
-  const postDate = createTextEl("div", "post-date", formatDate(date));
-  const postContent = createTextEl("div", "post-content", content);
+  box.append(
+    createTextEl("div", "box-title", "게시글"),
+    createTextEl("div", "post-title", title),
+    createTextEl("div", "post-date", formatDate(date)),
+    createTextEl("div", "post-content", content)
+  );
 
-  box.append(boxTitle, postTitle, postDate, postContent);
   el.appendChild(box);
-});
+}
 
-/* ======================
-   방명록 (Sheet2)
-====================== */
-loadSheet(GUESTBOOK_SHEET, guestbookEl, (row, el) => {
+// ===============================
+// 방명록 렌더링 (Sheet2)
+// ===============================
+function renderGuestbook(row, el) {
   const [name, message, date] =
     row.c.map(c => (c ? c.v : ""));
 
@@ -79,27 +85,35 @@ loadSheet(GUESTBOOK_SHEET, guestbookEl, (row, el) => {
   item.className = "guestbook-item";
   item.textContent = `${name} : ${message}`;
   el.appendChild(item);
-});
+}
 
-/* ======================
-   메뉴 UX 제어
-====================== */
+// ===============================
+// 화면 제어 (UX)
+// ===============================
 function showHome() {
   boardEl.style.display = "none";
   guestbookEl.style.display = "none";
+  boardEl.innerHTML = "";
+  guestbookEl.innerHTML = "";
 }
 
 function showBoard() {
   boardEl.style.display = "block";
   guestbookEl.style.display = "none";
+  boardEl.innerHTML = "";
+  loadSheet(BOARD_SHEET, boardEl, renderBoard);
 }
 
 function showGuestbook() {
   boardEl.style.display = "none";
   guestbookEl.style.display = "block";
+  guestbookEl.innerHTML = "";
+  loadSheet(GUESTBOOK_SHEET, guestbookEl, renderGuestbook);
 }
 
-// 버튼 이벤트
+// ===============================
+// 메뉴 버튼 이벤트
+// ===============================
 document.getElementById("menu-home").onclick = e => {
   e.preventDefault();
   showHome();
@@ -115,5 +129,7 @@ document.getElementById("menu-guestbook").onclick = e => {
   showGuestbook();
 };
 
+// ===============================
 // 초기 화면
+// ===============================
 showHome();
