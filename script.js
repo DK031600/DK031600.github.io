@@ -1,5 +1,5 @@
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbyczWzD2jqdNc3NtmYUwBUFh3Bo60PwjBLL7gejCBy_1EpKShqbDDIG5dDZprSxfo3d/exec";
+  "https://script.google.com/macros/s/AKfycbzW2B_PeyeyRslYbMJVn1U4NLEaMxyAmlqX3Y0los2oYEypZLmFSi_ozc5aHnAGz_vp/exec";
 
 // ===============================
 // DOM
