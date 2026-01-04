@@ -16,7 +16,7 @@ function formatDate(v) {
   if (!v) return "";
   const d = new Date(v);
   if (isNaN(d)) return v;
-  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
 // ===============================
@@ -62,6 +62,7 @@ function showBoard() {
       <div class="post-date"></div>
       <div class="post-content"></div>
     `;
+
     box.querySelector(".post-title").textContent = title;
     box.querySelector(".post-date").textContent = formatDate(date);
     box.querySelector(".post-content").textContent = content;
@@ -79,10 +80,20 @@ function showGuestbook() {
     const [id, name, message, date] = row;
     if (!name || !message) return;
 
-    const div = document.createElement("div");
-    div.className = "guestbook-item";
-    div.textContent = `${name} : ${message} (${formatDate(date)})`;
-    guestbookEl.appendChild(div);
+    const box = document.createElement("div");
+    box.className = "box";
+    box.innerHTML = `
+      <div class="box-title">방명록</div>
+      <div class="post-title"></div>
+      <div class="post-date"></div>
+      <div class="post-content"></div>
+    `;
+
+    box.querySelector(".post-title").textContent = name;
+    box.querySelector(".post-date").textContent = formatDate(date);
+    box.querySelector(".post-content").textContent = message;
+
+    guestbookEl.appendChild(box);
   });
 }
 
@@ -93,14 +104,18 @@ document.getElementById("menu-home").onclick = e => {
   e.preventDefault();
   showHome();
 };
+
 document.getElementById("menu-board").onclick = e => {
   e.preventDefault();
   showBoard();
 };
+
 document.getElementById("menu-guestbook").onclick = e => {
   e.preventDefault();
   showGuestbook();
 };
 
-// 초기
+// ===============================
+// 초기 화면
+// ===============================
 showHome();
