@@ -32,7 +32,9 @@ function createTextEl(tag, className, text) {
 }
 
 // ===============================
-// 시트 로드 공통 함수 (🔥 헤더 제거)
+// 시트 로드 공통 함수
+// - 헤더 행 제거
+// - 완전 빈 행 제거
 // ===============================
 function loadSheet(sheetName, targetEl, renderFn) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
@@ -45,15 +47,24 @@ function loadSheet(sheetName, targetEl, renderFn) {
 
       targetEl.innerHTML = "";
 
-      // 🔥 첫 줄(헤더) 제거
-      rows.slice(1).forEach(row => {
+      rows.forEach((row, index) => {
+        // 🔥 첫 줄(헤더) 제거
+        if (index === 0) return;
+
+        // 🔥 완전히 빈 행 제거
+        if (!row.c || row.c.every(c => !c || c.v === "")) return;
+
         renderFn(row, targetEl);
       });
+    })
+    .catch(err => {
+      console.error("시트 로드 실패:", err);
     });
 }
 
 // ===============================
 // 게시판 렌더링 (Sheet1)
+// Sheet1 구조: [postId, title, content, date, isPrivate]
 // ===============================
 function renderBoard(row, el) {
   const [postId, title, content, date, isPrivate] =
@@ -76,9 +87,9 @@ function renderBoard(row, el) {
 
 // ===============================
 // 방명록 렌더링 (Sheet2)
+// Sheet2 구조: [id, name, message, date]
 // ===============================
 function renderGuestbook(row, el) {
-  // Sheet2: [id, name, message, date]
   const [, name, message, date] =
     row.c.map(c => (c ? c.v : ""));
 
@@ -88,7 +99,6 @@ function renderGuestbook(row, el) {
 
   el.appendChild(item);
 }
-
 
 // ===============================
 // 화면 제어 (UX)
