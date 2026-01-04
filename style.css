@@ -2,19 +2,19 @@
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #dcdcff, #f7f7ff);
+  background: #E31C23;
   font-family: "Malgun Gothic", Arial, sans-serif;
-  color: #333;
+  color: #333333;
 }
 
 /* 전체 컨테이너 */
 .container {
   width: 900px;
   margin: 40px auto;
-  background: #ffffff;
-  border: 3px solid #9aa0ff;
+  background: transparent;
+  border: 3px solid #C9D6DF;
   border-radius: 14px;
-  box-shadow: 6px 6px 0 rgba(120, 120, 255, 0.3);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.15);
   padding: 20px;
 }
 
@@ -23,9 +23,11 @@ body {
   display: flex;
   align-items: center;
   gap: 20px;
-  border-bottom: 2px dotted #b5b8ff;
-  padding-bottom: 15px;
+  background: #EEF1F4;
+  border-bottom: 2px dotted #C9D6DF;
+  padding: 15px;
   margin-bottom: 20px;
+  border-radius: 10px;
 }
 
 /* 프로필 이미지 */
@@ -33,21 +35,22 @@ body {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  border: 3px solid #9aa0ff;
+  border: 3px solid #9FD6F0;
   object-fit: cover;
+  background: #FFFBE6;
 }
 
 /* 닉네임 */
 .nickname {
   font-size: 22px;
   font-weight: bold;
-  color: #5a5fff;
+  color: #E31C23;
 }
 
 /* 상태 메시지 */
 .status {
   font-size: 13px;
-  color: #666;
+  color: #555;
   margin-top: 4px;
 }
 
@@ -61,17 +64,17 @@ body {
 .menu a {
   text-decoration: none;
   padding: 6px 14px;
-  background: #eef0ff;
-  border: 1px solid #b5b8ff;
+  background: #EEF1F4;
+  border: 1px solid #C9D6DF;
   border-radius: 20px;
   font-size: 13px;
-  color: #444;
+  color: #333333;
   transition: all 0.2s;
 }
 
 .menu a:hover {
-  background: #5a5fff;
-  color: #fff;
+  background: #9FD6F0;
+  color: #333333;
 }
 
 /* 메인 콘텐츠 영역 */
@@ -92,8 +95,8 @@ body {
 
 /* 박스 공통 */
 .box {
-  background: #f9f9ff;
-  border: 2px solid #c6c9ff;
+  background: #EEF1F4;
+  border: 2px solid #C9D6DF;
   border-radius: 10px;
   padding: 15px;
   margin-bottom: 15px;
@@ -103,9 +106,9 @@ body {
 .box-title {
   font-size: 14px;
   font-weight: bold;
-  color: #5a5fff;
+  color: #E31C23;
   margin-bottom: 10px;
-  border-bottom: 1px dashed #c6c9ff;
+  border-bottom: 1px dashed #C9D6DF;
   padding-bottom: 5px;
 }
 
@@ -119,7 +122,7 @@ body {
 /* 게시글 날짜 */
 .post-date {
   font-size: 11px;
-  color: #888;
+  color: #666;
   margin-bottom: 10px;
 }
 
@@ -128,12 +131,15 @@ body {
   font-size: 14px;
   line-height: 1.7;
   white-space: pre-wrap;
+  background: #FFFBE6;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 /* 방명록 */
 .guestbook-item {
   font-size: 13px;
-  border-bottom: 1px dotted #ccc;
+  border-bottom: 1px dotted #C9D6DF;
   padding: 6px 0;
 }
 
@@ -145,6 +151,6 @@ body {
 .footer {
   text-align: center;
   font-size: 11px;
-  color: #999;
+  color: #ffffff;
   margin-top: 20px;
 }
