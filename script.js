@@ -1,4 +1,5 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyczWzD2jqdNc3NtmYUwBUFh3Bo60PwjBLL7gejCBy_1EpKShqbDDIG5dDZprSxfo3d/exec";
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbyczWzD2jqdNc3NtmYUwBUFh3Bo60PwjBLL7gejCBy_1EpKShqbDDIG5dDZprSxfo3d/exec";
 
 // ===============================
 // DOM
@@ -26,11 +27,13 @@ function loadBoard() {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
+      console.log("게시판 데이터:", data);
       boardData = data.board.slice(1); // 헤더 제거
       showBoard();
     })
     .catch(err => {
       console.error("게시판 로드 실패", err);
+      boardEl.innerHTML = "<p>게시글을 불러오지 못했습니다.</p>";
     });
 }
 
@@ -43,7 +46,6 @@ function showHome() {
 
 function showBoard() {
   boardEl.innerHTML = "";
-  boardEl.style.display = "block";
 
   boardData.forEach(row => {
     const [id, title, content, date, isPrivate] = row;
@@ -62,17 +64,21 @@ function showBoard() {
 }
 
 // ===============================
-// 메뉴
+// 메뉴 이벤트
 // ===============================
-menu-home.onclick = e => {
+document.getElementById("menu-home").onclick = e => {
   e.preventDefault();
   showHome();
 };
 
-menu-board.onclick = e => {
+document.getElementById("menu-board").onclick = e => {
   e.preventDefault();
   loadBoard();
 };
 
-// 초기
-showHome();
+// ===============================
+// 🔥 자동 로딩 (핵심)
+// ===============================
+window.addEventListener("DOMContentLoaded", () => {
+  loadBoard(); // 페이지 열리자마자 게시판 표시
+});
