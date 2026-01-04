@@ -22,19 +22,18 @@ let boardData = [];
 let guestData = [];
 
 // ===============================
-// 데이터 로드 (중요)
+// 데이터 로드
 // ===============================
 function loadData(callback) {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
+      console.log("로드된 데이터", data);
       boardData = data.board.slice(1);
       guestData = data.guestbook.slice(1);
       if (callback) callback();
     })
-    .catch(err => {
-      console.error("데이터 로드 실패", err);
-    });
+    .catch(err => console.error("데이터 로드 실패", err));
 }
 
 // ===============================
@@ -102,13 +101,16 @@ document.getElementById("guest-submit").onclick = () => {
 
   fetch(API_URL, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, message })
   })
+  .then(res => res.json())
   .then(() => {
     document.getElementById("guest-name").value = "";
     document.getElementById("guest-message").value = "";
     loadData(showGuestbook);
-  });
+  })
+  .catch(err => console.error("등록 실패", err));
 };
 
 // ===============================
