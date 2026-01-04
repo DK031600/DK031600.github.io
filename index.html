@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8">
   <title>DoubleKill</title>
@@ -9,43 +8,45 @@
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <div class="header">
-      <img src="profile.jpg" class="profile-img">
-      <div>
-        <div class="nickname">DoubleKill</div>
-        <div class="status">青森県八戸市鮫町</div>
+  <div class="header">
+    <img src="profile.jpg" class="profile-img">
+    <div>
+      <div class="nickname">DoubleKill</div>
+      <div class="status">青森県八戸市鮫町</div>
+    </div>
+  </div>
+
+  <div class="menu">
+    <a href="#" id="menu-home">홈</a>
+    <a href="#" id="menu-board">게시판</a>
+    <a href="#" id="menu-guestbook">방명록</a>
+  </div>
+
+  <div class="main">
+    <div class="left" id="board"></div>
+
+    <div class="right" id="guestbook">
+
+      <!-- ✅ 방명록 작성 폼 -->
+      <div id="guestbook-form">
+        <input type="text" id="guest-name" placeholder="이름">
+        <textarea id="guest-message" placeholder="방명록을 남겨주세요"></textarea>
+        <button id="guest-submit">등록</button>
       </div>
-    </div>
 
-<div class="menu">
-  <a href="#" id="menu-home">홈</a>
-  <a href="#" id="menu-board">게시판</a>
-  <a href="#" id="menu-guestbook">방명록</a>
+      <!-- 방명록 목록이 아래에 표시됨 -->
+
+    </div>
+  </div>
+
+  <div class="footer">
+    © DK031600 Minihompy
+  </div>
+
 </div>
 
-<div class="main">
-  <div class="left" id="board">
-    <!-- Sheet1 게시판 글이 들어올 곳 -->
-  </div>
-
-  <div class="right" id="guestbook">
-    <!-- Sheet2 방명록 글이 들어올 곳 -->
-  </div>
-</div>
-
-    <div class="footer">
-      © DK031600 Minihompy
-    </div>
-
-  </div>
-
-  <!-- 🔽 여기! body 맨 아래 -->
-  <script src="script.js"></script>
-
+<script src="script.js"></script>
 </body>
 </html>
-
-
-
