@@ -1,6 +1,3 @@
-// ===============================
-// Apps Script API
-// ===============================
 const API_URL = "https://script.google.com/macros/s/AKfycbyczWzD2jqdNc3NtmYUwBUFh3Bo60PwjBLL7gejCBy_1EpKShqbDDIG5dDZprSxfo3d/exec";
 
 // ===============================
@@ -13,36 +10,36 @@ const guestbookEl = document.getElementById("guestbook");
 // 유틸
 // ===============================
 function formatDate(v) {
-  if (!v) return "";
   const d = new Date(v);
-  if (isNaN(d)) return v;
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+  if (isNaN(d)) return "";
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`;
 }
 
 // ===============================
-// 데이터 로드
+// 데이터
 // ===============================
 let boardData = [];
 let guestData = [];
 
-fetch(API_URL)
-  .then(res => res.json())
-  .then(data => {
-    boardData = data.board.slice(1);      // 헤더 제거
-    guestData = data.guestbook.slice(1);  // 헤더 제거
-  })
-  .catch(err => {
-    console.error("데이터 로드 실패", err);
-  });
+// ===============================
+// 로드
+// ===============================
+function loadData() {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      boardData = data.board.slice(1);
+      guestData = data.guestbook.slice(1);
+    });
+}
+loadData();
 
 // ===============================
-// 렌더링
+// 화면
 // ===============================
 function showHome() {
   boardEl.style.display = "none";
   guestbookEl.style.display = "none";
-  boardEl.innerHTML = "";
-  guestbookEl.innerHTML = "";
 }
 
 function showBoard() {
@@ -58,15 +55,10 @@ function showBoard() {
     box.className = "box";
     box.innerHTML = `
       <div class="box-title">게시글</div>
-      <div class="post-title"></div>
-      <div class="post-date"></div>
-      <div class="post-content"></div>
+      <div class="post-title">${title}</div>
+      <div class="post-date">${formatDate(date)}</div>
+      <div class="post-content">${content}</div>
     `;
-
-    box.querySelector(".post-title").textContent = title;
-    box.querySelector(".post-date").textContent = formatDate(date);
-    box.querySelector(".post-content").textContent = content;
-
     boardEl.appendChild(box);
   });
 }
@@ -74,48 +66,56 @@ function showBoard() {
 function showGuestbook() {
   boardEl.style.display = "none";
   guestbookEl.style.display = "block";
-  guestbookEl.innerHTML = "";
 
-  guestData.forEach(row => {
-    const [id, name, message, date] = row;
+  // 폼 아래만 초기화
+  guestbookEl.querySelectorAll(".box").forEach(el => el.remove());
+
+  guestData.slice().reverse().forEach(row => {
+    const [date, name, message] = row;
     if (!name || !message) return;
 
     const box = document.createElement("div");
     box.className = "box";
     box.innerHTML = `
       <div class="box-title">방명록</div>
-      <div class="post-title"></div>
-      <div class="post-date"></div>
-      <div class="post-content"></div>
+      <div class="post-title">${name}</div>
+      <div class="post-date">${formatDate(date)}</div>
+      <div class="post-content">${message}</div>
     `;
-
-    box.querySelector(".post-title").textContent = name;
-    box.querySelector(".post-date").textContent = formatDate(date);
-    box.querySelector(".post-content").textContent = message;
-
     guestbookEl.appendChild(box);
   });
 }
 
 // ===============================
-// 메뉴 이벤트
+// 방명록 등록
 // ===============================
-document.getElementById("menu-home").onclick = e => {
-  e.preventDefault();
-  showHome();
+document.getElementById("guest-submit").onclick = () => {
+  const name = guest-name.value.trim();
+  const message = guest-message.value.trim();
+
+  if (!name || !message) {
+    alert("이름과 내용을 입력해주세요");
+    return;
+  }
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ name, message })
+  })
+  .then(() => {
+    guest-name.value = "";
+    guest-message.value = "";
+    loadData();
+    setTimeout(showGuestbook, 500);
+  });
 };
 
-document.getElementById("menu-board").onclick = e => {
-  e.preventDefault();
-  showBoard();
-};
-
-document.getElementById("menu-guestbook").onclick = e => {
-  e.preventDefault();
-  showGuestbook();
-};
-
 // ===============================
-// 초기 화면
+// 메뉴
 // ===============================
+menu-home.onclick = e => { e.preventDefault(); showHome(); };
+menu-board.onclick = e => { e.preventDefault(); showBoard(); };
+menu-guestbook.onclick = e => { e.preventDefault(); showGuestbook(); };
+
+// 초기
 showHome();
